@@ -2,7 +2,7 @@ import React from 'react'
 
 export default function Svg14({stroke}) {
   return (
-    <div><svg xmlns="http://www.w3.org/2000/svg" class="icon icon-tabler icon-tabler-tools" width="44" height="44" viewBox="0 0 24 24" stroke-width="1.5" stroke={stroke} fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <div><svg xmlns="http://www.w3.org/2000/svg" className="icon icon-tabler icon-tabler-tools" width="44" height="44" viewBox="0 0 24 24" strokeWidth="1.5" stroke={stroke} fill="none" strokeLinecap="round" strokeLinejoin="round">
     <path stroke={'white'} d="M0 0h24v24H0z" fill="none"/>
     <path d="M3 21h4l13 -13a1.5 1.5 0 0 0 -4 -4l-13 13v4" />
     <line x1="14.5" y1="5.5" x2="18.5" y2="9.5" />

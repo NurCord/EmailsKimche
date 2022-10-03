@@ -66,7 +66,7 @@ export const FormButtonFile = styled.button`
     height: 3rem;
     border: solid;
     border-width: 0.1px 0.1px 0.1px 8px;
-    border-color: #2f80ac;
+    border-color: ${props => props.file ? '#0e3347' : '#2f80ac'};
     border-radius: 4px;
     width: 100%;
     margin: 0rem 0.1rem;
