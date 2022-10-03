@@ -14,7 +14,7 @@
 */
 
 function normalizeEmail(email){
-  return email.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+  return email.normalize("NFD").replace(/[ \u0300-\u036f]/g, "")
 }
 
 function cleanRut(rut){
@@ -43,7 +43,7 @@ export const createEmails = (dataUsersExcel, dataUsersGoogle, emailDomain)=>{
       	if(searchRutUser){
           correctEmails.push({...user, 'Mail Libro': searchRutUser['Email Address [Required]']})
         }else{
-          if(user['Mail Libro'].includes(emailDomain)){
+          if(user['Mail Libro']?.includes(emailDomain)){
             correctEmails.push(user)
            }else{
             let newEmail = `${user.Nombre.toLowerCase()}.${user['Apellido Paterno'].toLowerCase()}${emailDomain}`

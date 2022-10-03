@@ -29,6 +29,13 @@ export default function Form() {
 
   const onSubmit = e => {
     e.preventDefault()
+    console.log(dataExcel.dataStudent)
+    if(dataExcel.dataStudent){
+      console.log(createEmails(dataExcel.dataStudent, dataGoogle, valueDomain.student));
+    }
+    if(dataExcel.dataTeacher){
+      console.log(createEmails(dataExcel.dataTeacher, dataGoogle, valueDomain.teacher));
+    }
   }
   
   return (
