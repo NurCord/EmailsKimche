@@ -9,7 +9,7 @@
 ### General Info
 
 ---
-🚀 Deploy: [Findbook](https://emals-kimche.vercel.app/)
+🚀 Deploy: [EmailsKimche](https://emals-kimche.vercel.app/)
 
 Creación de mails
 
