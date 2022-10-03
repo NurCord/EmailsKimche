@@ -5,17 +5,13 @@
   'Apellido Paterno': 'Jose',
   'Mail Libro': 'hola@hotmail.com'
 	}
-
-
   google = {
   'First Name [Required]': 'Aláberto',
   'Employee ID': '67.456.565-7',
   'Last Name [Required]': 'FerrÜz',
   'Email Address [Required]': 'honíaÜ@google.com'
 	}
-
 */
-
 
 function normalizeEmail(email){
   return email.normalize("NFD").replace(/[\u0300-\u036f]/g, "")
