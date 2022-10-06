@@ -1,6 +1,7 @@
 import * as XLSX from "xlsx";
 
 export const functionFile = (file, setDataExcel) => {
+    if(file){
         const fileReader = new FileReader()
         fileReader.readAsArrayBuffer(file)
         fileReader.onload = e => {
@@ -20,4 +21,5 @@ export const functionFile = (file, setDataExcel) => {
         fileReader.onerror = (err) =>{
             console.log(err);
         }
+    }
 }

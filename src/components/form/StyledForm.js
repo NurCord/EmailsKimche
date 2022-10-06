@@ -7,6 +7,17 @@ const theme = {
     'yelow': '#f5ae13'
 }
 
+const button = `
+    height: 3rem;
+    width: 10rem;
+    cursor: pointer;
+    background-color: #2f80ac;
+    margin: auto;
+    border-radius: 0.3rem;
+    border: 0.1rem solid transparent;
+    color: white;
+`
+
 export const FormContent = styled.div`
     display: grid;
     align-content: center;
@@ -21,6 +32,7 @@ export const FormBackground = styled.div`
     align-items: center;
     justify-content: center;
     border-radius: 0.5rem;
+    position: relative;
 `
 
 export const FormFC = styled.form`
@@ -51,21 +63,27 @@ export const FormInput = styled.input`
         border-color: #2f80ac;
     }
 `
-const button = `
-    height: 3rem;
-    width: 10rem;
-    cursor: pointer;
-    background-color: #2f80ac;
-    margin: auto;
-    border-radius: 0.3rem;
-    border: 0.1rem solid transparent;
+
+export const FormSelect = styled.select`
+    ${button}
+    padding-left: 1rem;
 `
 
 export const FormButton = styled.input`
     ${button}
 `
-export const FormButtonDownload = styled.button`
+export const FormButtonNext = styled.button`
     ${button}
+`
+
+export const FormButtonReturn = styled.button`
+    ${button}
+    height: 2rem;
+    width: 2rem;
+    position: absolute;
+    top: 0;
+    right: 2rem;
+    padding: 0;
 `
 
 export const FormButtonFile = styled.button`

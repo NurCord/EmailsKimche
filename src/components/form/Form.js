@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
-import { FormContent, FormFC, FormInput, FormButtonDownload, FormButtonFile, FormFile, FormButton, FormInputs, FormBackground } from './StyledForm'
+import { FormContent, FormFC, FormButtonReturn, FormButtonNext, FormBackground } from './StyledForm'
 import { createEmails } from '../../functions/functionForm'
 import { functionFile } from '../../functions/functionFile'
 import { csvJSON } from '../../functions/functionFileCSV'
+import FormFirst from './FormFirst'
+import FormSecond from './FormSecond'
 import * as XLSX from "xlsx";
 let domains = {
   'student': '',
@@ -12,15 +14,20 @@ let domains = {
 export default function Form() {
   const [dataExcel, setDataExcel] = useState({});
   const [dataGoogle , setDataGoogle] = useState([])
+  const [org , setOrg] = useState([])
   const [valueDomain , setValueDomain] = useState(domains)
-  const [dowload , setDowload] = useState({ 'value': true, 'archive': ''})
+  const [dowload , setDowload] = useState({ 'value': 'first', 'archiveExcel': false, 'archiveGoogle': false})
   
   const changeXLSXToJson = file => {
     functionFile(file, setDataExcel)
+    let archiveExist = file?.name ? true : false
+    setDowload({...dowload, 'archiveExcel': archiveExist})
   }
 
   const changeCSVToJson = file => {
     csvJSON(file, setDataGoogle)
+    let archiveExist = file?.name ? true : false
+    setDowload({...dowload, 'archiveGoogle': archiveExist})
   }
 
   const changeJSONToExcel = (students, teachers) => {
@@ -46,7 +53,8 @@ export default function Form() {
     changeJSONToExcel(students, teachers)
   }
 
-  const onSubmit = e => {
+  const onSubmit = (e, type) => {
+    console.log(e);
     e.preventDefault()
     /* if(dataExcel.dataStudent){
       console.log(createEmails(dataExcel.dataStudent, dataGoogle, valueDomain.student));
@@ -54,35 +62,43 @@ export default function Form() {
     if(dataExcel.dataTeacher){
       console.log(createEmails(dataExcel.dataTeacher, dataGoogle, valueDomain.teacher));
     } */
-    setDowload(false)
+    type === 'first' ? setDowload({...dowload, 'value': 'second'}) : setDowload({...dowload, 'value': 'third'})
   }
   
   return (
     <FormContent>
+      <FormBackground>
+          {
+            dowload?.value === 'first' ? 
+                <FormFC onSubmit={(e) => onSubmit(e, 'first')}>
+                  <FormFirst 
+                    setDowload={setDowload} 
+                    dowload={dowload}
+                    changeXLSXToJson={changeXLSXToJson}
+                    changeCSVToJson={changeCSVToJson} 
+                    handleOnChangeDomain={handleOnChangeDomain}
+                    /> 
+                </FormFC> : dowload.value === 'second' ? 
+                <FormFC onSubmit={(e) => onSubmit(e, 'second')}>
+                  <FormSecond 
+                    setOrg={setOrg}
+                    setDowload={setDowload} 
+                    dowload={dowload}
+                    />
+                </FormFC>
+                : null
+            }
+      </FormBackground>
       {
-        dowload.value ? <FormBackground>
-          <FormFC onSubmit={onSubmit}>
-            <FormInputs>
-              <FormInput type='text' required placeholder='Dominio email alumno, ej: @escuela.cl' name='student' pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" onChange={e => handleOnChangeDomain(e.target.value, 'student')}/>
-            </FormInputs>
-            <FormInputs>
-              <FormInput type='text' placeholder='Dominio email docente, ej: @escuela.cl' pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" name='teacher' onChange={e => handleOnChangeDomain(e.target.value, 'teacher')}/>
-            </FormInputs>
-            <FormInputs>
-              <FormButtonFile file={dataExcel.dataStudent?.length > 0 ? true : false}>
-                Subir Archivo
-              <FormFile required type={'file'} onChange={e => changeXLSXToJson(e.target.files[0])} />
-              </FormButtonFile>
-              <FormButtonFile file={dataGoogle?.length > 0 ? true : false}>
-                Subir Archivo Google
-                <FormFile required type={'file'} onChange={e => changeCSVToJson(e.target.files[0])} />
-              </FormButtonFile> 
-            </FormInputs>
-            <FormButton type={'submit'} />
-          </FormFC>
-        </FormBackground> :
-        <FormButtonDownload onClick={handleOnClickDownload}>Download</FormButtonDownload>
+        dowload?.value === 'third' ? 
+        <FormBackground>
+          <FormButtonReturn onClick={()=> setDowload({'archiveExcel': false, 'archiveGoogle': false, 'value': 'first'})}> x </FormButtonReturn>
+          <FormButtonNext onClick={handleOnClickDownload}>Descargar</FormButtonNext>
+        </FormBackground> : null
       }
     </FormContent>
   )
 }
+
+/* 
+*/
