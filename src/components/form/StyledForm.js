@@ -51,8 +51,7 @@ export const FormInput = styled.input`
         border-color: #2f80ac;
     }
 `
-
-export const FormButton = styled.input`
+const button = `
     height: 3rem;
     width: 10rem;
     cursor: pointer;
@@ -61,6 +60,14 @@ export const FormButton = styled.input`
     border-radius: 0.3rem;
     border: 0.1rem solid transparent;
 `
+
+export const FormButton = styled.input`
+    ${button}
+`
+export const FormButtonDownload = styled.button`
+    ${button}
+`
+
 export const FormButtonFile = styled.button`
     position: relative;
     height: 3rem;
