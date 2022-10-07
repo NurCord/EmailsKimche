@@ -1,14 +1,14 @@
 import React from 'react'
 import { FormInputs, FormInput, FormButtonFile, FormFile, FormButton} from './StyledForm'
 
-export default function FormFirst({ dowload, changeXLSXToJson, changeCSVToJson, handleOnChangeDomain}) {
+export default function FormFirst({ dowload, changeXLSXToJson, changeCSVToJson, handleOnChangeDomain, valueDomain}) {
   return (
         <>
             <FormInputs>
-                <FormInput type='text' required placeholder='Dominio email alumno, ej: @escuela.cl' name='student' pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" onChange={e => handleOnChangeDomain(e.target.value, 'student')}/>
+                <FormInput type='text' required placeholder='Dominio email alumno, ej: @escuela.cl' name='student' value={valueDomain.student} pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" onChange={e => handleOnChangeDomain(e.target.value, 'student')}/>
             </FormInputs>
             <FormInputs>
-                <FormInput type='text' placeholder='Dominio email docente, ej: @escuela.cl' pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" name='teacher' onChange={e => handleOnChangeDomain(e.target.value, 'teacher')}/>
+                <FormInput type='text' placeholder='Dominio email docente, ej: @escuela.cl' pattern="^@[a-z0-9.-]+\.[a-z]{2,4}$" name='teacher' value={valueDomain.teacher} onChange={e => handleOnChangeDomain(e.target.value, 'teacher')}/>
             </FormInputs>
             <FormInputs>
                 <FormButtonFile file={dowload?.archiveExcel ? true : false}>

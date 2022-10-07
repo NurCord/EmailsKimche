@@ -1,20 +1,46 @@
 import React from 'react'
-import { FormInputs, FormSelect, FormInput, FormButton, FormButtonReturn } from './StyledForm'
+import { FormInputs, FormSelect, FormInput, FormButton, FormButtonReturn, FormButtonFile, FormFile } from './StyledForm'
 import SvgBack from '../scrollimg/svg/SvgBack'
-export default function FormSecond({setOrg, setDowload, dowload}) {
+import { useState } from 'react'
+export default function FormSecond({changeXLSXToJsonOrg, setOrg, setDowload, dowload}) {
+  const [typeOfOrg, setTypeOfOrg] = useState('manual')
+
+  const handleOnClick = () => {
+    setDowload({...dowload, 'value': 'first'})
+  }
+  const handleOnChange = (e) => {
+    setTypeOfOrg(e)
+  }
+  const handleOnChangeOrg = (e, role) => {
+    setOrg(prevValue => {return {...prevValue, [role]: e}})
+  }
+
   return (
     <>
         <FormInputs>
-            <FormSelect>
+            <FormSelect onChange={(e) => handleOnChange(e.target.value)}>
                 <option value='Org' disabled>Org</option>
-                <option value='Manual'>Manual</option>
                 <option value='Archivo'>Archivo</option>
+                <option value='Manual'>Manual</option>
             </FormSelect>
         </FormInputs> 
-        <FormInputs>
-            <FormInput type='text' placeholder='Org, ej: /RBD - nombre de colegio/rol' name='org' onChange={e => setOrg(e.target.value)}/>
-        </FormInputs>
-        <FormButtonReturn onClick={() => setDowload({...dowload, 'value': 'first'})}><SvgBack/></FormButtonReturn>
+        {
+          typeOfOrg === 'Manual' ? 
+          <>
+            <FormInputs>
+              <FormInput type='text' required placeholder='Org Student, ej: /RBD - nombre de colegio/rol' name='org' onChange={e => handleOnChangeOrg(e.target.value, 'student')}/>
+            </FormInputs> 
+            <FormInputs>
+              <FormInput type='text' required placeholder='Org Teacher, ej: /RBD - nombre de colegio/rol' name='org' onChange={e => handleOnChangeOrg(e.target.value, 'teacher')}/>
+            </FormInputs> 
+          </>  
+          : 
+          <FormButtonFile file={dowload?.archiveExcelOrg ? true : false}>
+            Subir Archivo
+            <FormFile required type={'file'} onChange={e => changeXLSXToJsonOrg(e.target.files[0])} />
+          </FormButtonFile>
+        }
+        <FormButtonReturn onClick={handleOnClick}><SvgBack/></FormButtonReturn>
         <FormButton type='submit'/>
     </>
   )

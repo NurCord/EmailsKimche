@@ -66,6 +66,7 @@ export const FormInput = styled.input`
 
 export const FormSelect = styled.select`
     ${button}
+    width: 100%;
     padding-left: 1rem;
 `
 

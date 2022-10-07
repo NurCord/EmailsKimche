@@ -36,9 +36,7 @@ export const createEmails = (dataUsersExcel, dataUsersGoogle, emailDomain)=>{
 
     dataUsersExcel.forEach(user => {
 
-        user.RUT = cleanRut(user.RUT)
-
-        let searchRutUser = dataUsersGoogleCleanRut.find(userGoogle => userGoogle['Employee ID'] === user.RUT)
+        let searchRutUser = dataUsersGoogleCleanRut.find(userGoogle => userGoogle['Employee ID'] === cleanRut(user.RUT))
 
       	if(searchRutUser){
           correctEmails.push({...user, 'Mail Libro': searchRutUser['Email Address [Required]']})
