@@ -14,11 +14,11 @@ export default function FormFirst({ dowload, changeXLSXToJson, changeCSVToJson, 
             <FormInputs>
                 <FormButtonFile file={dowload?.archiveExcel ? true : false}>
                     Subir Archivo
-                    <FormFile required type={'file'} onChange={e => changeXLSXToJson(e.target.files[0])} />
+                    <FormFile required type={'file'} accept=".xlsx, .xls" onChange={e => changeXLSXToJson(e.target.files[0])} />
                 </FormButtonFile>
                 <FormButtonFile file={dowload?.archiveGoogle ? true : false}>
                     Subir Archivo Google
-                    <FormFile required type={'file'} onChange={e => changeCSVToJson(e.target.files[0])} />
+                    <FormFile required type={'file'} accept=".csv" onChange={e => changeCSVToJson(e.target.files[0])} />
                 </FormButtonFile> 
             </FormInputs>
             <FormButton type='submit' value="Continuar"/>

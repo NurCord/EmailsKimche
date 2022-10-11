@@ -1,6 +1,6 @@
 import cleanRut from "./functionCleanRut"
 
-export function createUSERPG(students, teachers, org) {
+export function createUSERPG(students, teachers, org, orgGoogle) {
         let userPG = []
         if(org?.length > 0){
             students.correctEmails.forEach(user => {
@@ -25,16 +25,36 @@ export function createUSERPG(students, teachers, org) {
                  }})
         }else{
             students.correctEmails.forEach(user => {
-                userPG.push(correctMailUserPG(user, org.student))
+                let searchOrgUser = orgGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user.RUT))
+                let orgFind = org.student;
+                if(searchOrgUser?.hasOwnProperty('Org Unit Path [Required]')){
+                    orgFind = searchOrgUser['Org Unit Path [Required]'] !== '' ? searchOrgUser['Org Unit Path [Required]'] : org.student
+                } 
+                userPG.push(correctMailUserPG(user, orgFind))
             });
             students.createdEmails.forEach(user => {
-                userPG.push(createdMailUserPG(user, org.student))
+                let searchOrgUser = orgGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user.RUT))
+                let orgFind = org.student;
+                if(searchOrgUser?.hasOwnProperty('Org Unit Path [Required]')){
+                    orgFind = searchOrgUser['Org Unit Path [Required]'] !== '' ? searchOrgUser['Org Unit Path [Required]'] : org.student
+                } 
+                userPG.push(createdMailUserPG(user, orgFind))
             })
             teachers.correctEmails.forEach(user => {
-                userPG.push(correctMailUserPG(user, org.teacher))
+                let searchOrgUser = orgGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user.RUT))
+                let orgFind = org.teacher;
+                if(searchOrgUser?.hasOwnProperty('Org Unit Path [Required]')){
+                    orgFind = searchOrgUser['Org Unit Path [Required]'] !== '' ? searchOrgUser['Org Unit Path [Required]'] : org.teacher
+                } 
+                userPG.push(correctMailUserPG(user, orgFind))
             });
             teachers.createdEmails.forEach(user => {
-                userPG.push(createdMailUserPG(user, org.teacher))
+                let searchOrgUser = orgGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user.RUT))
+                let orgFind = org.teacher;
+                if(searchOrgUser?.hasOwnProperty('Org Unit Path [Required]')){
+                    orgFind = searchOrgUser['Org Unit Path [Required]'] !== '' ? searchOrgUser['Org Unit Path [Required]'] : org.teacher
+                } 
+                userPG.push(createdMailUserPG(user, orgFind))
             })
         }
         return userPG
@@ -47,6 +67,7 @@ function correctMailUserPG(user, org){
         'Last Name [Required]': user['Apellido Paterno'],
         'Email Address [Required]': user['Mail Libro'],
         'Org Unit Path [Required]': org,
+        'Change Password at Next Sign-In': 'FALSO',
         'Password [Required]': '****',
     }
 }
@@ -58,6 +79,7 @@ function createdMailUserPG(user, org){
         'Last Name [Required]': user['Apellido Paterno'],
         'Email Address [Required]': user['Mail Libro'],
         'Org Unit Path [Required]': org,
+        'Change Password at Next Sign-In': 'VERDADERO',
         'Password [Required]': cleanRut(user.RUT).slice(0,4)
     }
 }

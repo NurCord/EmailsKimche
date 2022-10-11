@@ -50,7 +50,7 @@ export default function Form() {
     XLSX.utils.book_append_sheet(wb, wsTeacherCreated, "Docentes Creados");
     XLSX.utils.book_append_sheet(wb, wsError, "Mails Erroneos");
     XLSX.utils.book_append_sheet(wb, wsUSERPG, "USERPG");
-    XLSX.writeFile(wb, "sheetjs.xlsx");
+    XLSX.writeFile(wb, `${dataExcel?.nameArchive}sheetjs.xlsx`);
   }
 
   const handleOnChangeDomain = (e, role)=> {
@@ -61,7 +61,7 @@ export default function Form() {
     let mailsCreated = createEmails(dataExcel.dataStudent, dataExcel.dataTeacher, dataGoogle, valueDomain)
     let students = mailsCreated.students
     let teachers = mailsCreated.teachers
-    let USERPG = createUSERPG(students, teachers, org)
+    let USERPG = createUSERPG(students, teachers, org, dataGoogle)
     changeJSONToExcel(students, teachers, USERPG)
   }
 

@@ -37,7 +37,7 @@ export default function FormSecond({changeXLSXToJsonOrg, setOrg, setDowload, dow
           : 
           <FormButtonFile file={dowload?.archiveExcelOrg ? true : false}>
             Subir Archivo
-            <FormFile required type={'file'} onChange={e => changeXLSXToJsonOrg(e.target.files[0])} />
+            <FormFile required type={'file'} accept=".xlsx, .xls" onChange={e => changeXLSXToJsonOrg(e.target.files[0])} />
           </FormButtonFile>
         }
         <FormButtonReturn onClick={handleOnClick}><SvgBack/></FormButtonReturn>

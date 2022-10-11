@@ -11,9 +11,11 @@ export const functionFile = (file, setDataExcel) => {
             const wsTeacher = wb.Sheets['Docentes'];
             const dataStudent = XLSX.utils.sheet_to_json(wsStudent);
             const dataTeacher = XLSX.utils.sheet_to_json(wsTeacher);
+            let nameArchive = `${dataStudent[0].RBD}-${dataStudent[0].Establecimiento.replaceAll(' ', '-')}-MailGoogle`
             setDataExcel({
                 dataStudent,
-                dataTeacher
+                dataTeacher,
+                nameArchive
             })
         }
         fileReader.onerror = (err) =>{

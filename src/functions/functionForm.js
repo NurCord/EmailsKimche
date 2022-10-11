@@ -1,37 +1,61 @@
 import normalizeEmail from "./functionNormalizeEmail"
 import cleanRut from "./functionCleanRut"
 
+let studentBase = {
+  'RBD': '',	
+  'Establecimiento': '',	
+  'Curso': '',
+  'Nombre': '',	
+  'Apellido Paterno': '',	
+  'RUT': '',
+  'Mail Libro': ''
+}
+
+let {Curso, ...teacher} = studentBase 	
+teacher['Apellido Materno']	= ''	
+
+function userToPush(userObj, rol){
+  let obj = {}
+  let typeRol = rol === 'Estudiante' ? studentBase : teacher
+  Object.keys(typeRol).forEach(params => obj[params] = userObj[params])
+  return obj
+}
+
 export const createEmails = (dataUsersExcelStudents, dataUsersExcelTeachers, dataUsersGoogle, emailDomain)=>{
     let objEmails = {}
-
     let mails = dataUsersGoogle.concat(dataUsersExcelTeachers).concat(dataUsersExcelStudents)
     addEmail(objEmails, null, mails)
 
-    let students = verifyMails(objEmails, dataUsersExcelStudents, dataUsersGoogle, emailDomain.student)
+    let students = verifyMails(objEmails, dataUsersExcelStudents, dataUsersGoogle, emailDomain.student, 'Estudiante')
 
     let teacherDomain = emailDomain.teacher ? emailDomain.teacher : emailDomain.student
-    let teachers = verifyMails(objEmails, dataUsersExcelTeachers, dataUsersGoogle, teacherDomain)
+    let teachers = verifyMails(objEmails, dataUsersExcelTeachers, dataUsersGoogle, teacherDomain, 'Profesor')
 
     return { students, teachers }
 } 
 
-function verifyMails(objEmails, dataUsersExcel , dataUsersGoogle, emailDomain){
+function verifyMails(objEmails, dataUsersExcel , dataUsersGoogle, emailDomain, rol){
     let correctEmails = []
     let createdEmails = []
     let errorMails = []
 
     dataUsersExcel.forEach(user => {
-        user = user['Curso'] ? userToPush(user, 'student') : userToPush(user, 'teacher')
+        user = user['Curso'] ? userToPush(user, rol) : userToPush(user,rol)
 
-        let searchRutUser = dataUsersGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user.RUT))
-
+        let searchRutUser = dataUsersGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user['RUT']))
         if(searchRutUser){
+          if(/[A-ZáéíóúñÑ üÜ]/.test(searchRutUser['Email Address [Required]'])){
+            errorMails.push({...user, 'Mail Creado': 'NO', 'Rol': rol})
+          }
           correctEmails.push({...user, 'Mail Libro': normalizeEmail(searchRutUser['Email Address [Required]'].toLowerCase())})
         }else{
           if(user['Mail Libro']?.includes(emailDomain)){
+            if(/[A-ZáéíóúñÑ üÜ]/.test(user['Mail Libro'])){
+              errorMails.push({...user, 'Mail Creado': 'NO', 'Rol': rol})
+            }
             correctEmails.push({...user, 'Mail Libro': normalizeEmail(user['Mail Libro'].toLowerCase())})
           }else{
-            if(user['Mail Libro']) errorMails.push({...user})
+            if(user['Mail Libro']) errorMails.push({...user, 'Mail Creado': 'SI', 'Rol': rol})
             let name = user.Nombre.toLowerCase().split(' ')[0]
             let lastName = user['Apellido Paterno'].toLowerCase().split(' ')[0]
 
@@ -61,30 +85,7 @@ function addEmail(obj, mail, arrayOfMails){
   }else{
     obj[mail] = obj[mail] ? obj[mail] + 1 : 1
   }
-}
-
-let student = {
-  'RBD': '',	
-  'Establecimiento': '',	
-  'Curso': '',
-  'Nombre': '',	
-  'Apellido Paterno': '',	
-  'RUT': '',
-  'Mail Libro': ''
-}
-
-let {Curso, ...teacher} = student 	
-teacher['Apellido Materno']	= ''												
-
-function userToPush(userObj, rol){
-  let obj = {}
-  let typeRol = rol === 'student' ? student : teacher
-  Object.keys(typeRol).forEach(params => obj[params] = userObj[params])
-  return obj
-}
-
-
-
+}											
 /* 
   student = {
   'Nombre': 'Alberto',
