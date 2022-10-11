@@ -7,12 +7,11 @@ export function getOrg(data, setOrg) {
             fileReader.onload = e => {
                 const buffer = e.target.result
                 const wb = XLSX.read(buffer, {type: "buffer"})
-                const wsNameOrg = wb.SheetNames[13]
-                const wsOrg = wb.Sheets[wsNameOrg];
-                const dataOrg = XLSX.utils.sheet_to_json(wsOrg);
-                setOrg({
-                    dataOrg
-                })
+                const wsOrgEG = wb.Sheets['EG'];
+                const wsOrgPG = wb.Sheets['PG'];
+                const dataOrgEG = XLSX.utils.sheet_to_json(wsOrgEG);
+                const dataOrgPG = XLSX.utils.sheet_to_json(wsOrgPG);
+                setOrg(dataOrgEG.concat(dataOrgPG))
             }
             fileReader.onerror = (err) =>{
                 console.log(err);

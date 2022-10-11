@@ -6,7 +6,7 @@ export default function FormSecond({changeXLSXToJsonOrg, setOrg, setDowload, dow
   const [typeOfOrg, setTypeOfOrg] = useState('manual')
 
   const handleOnClick = () => {
-    setDowload({...dowload, 'value': 'first'})
+    setDowload({...dowload, 'value': 'first', 'archiveExcel': false, 'archiveGoogle': false})
   }
   const handleOnChange = (e) => {
     setTypeOfOrg(e)

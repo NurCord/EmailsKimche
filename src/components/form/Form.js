@@ -6,20 +6,18 @@ import { csvJSON } from '../../functions/functionFileCSV'
 import FormFirst from './FormFirst'
 import FormSecond from './FormSecond'
 import { getOrg } from '../../functions/functionOrg'
-import { creationEG, creationPG } from '../../functions/function'
+import { createUSERPG } from '../../functions/functionUSERPG'
 import * as XLSX from "xlsx";
-let domains = {
-  'student': '',
-  'teacher': ''
-}
+import { domains, stateInitial} from '../../variables/formVariables'
+import FormDowload from './FormDowload'
 
 export default function Form() {
   const [dataExcel, setDataExcel] = useState({});
   const [dataGoogle , setDataGoogle] = useState([])
   const [org, setOrg] = useState({})
   const [valueDomain , setValueDomain] = useState(domains)
-  const [dowload , setDowload] = useState({ 'value': 'first', 'archiveExcel': false, 'archiveGoogle': false, 'archiveExcelOrg': false})
-  console.log(org)
+  const [dowload , setDowload] = useState(stateInitial)
+
   const changeXLSXToJson = file => {
     functionFile(file, setDataExcel)
     let archiveExist = file?.name ? true : false
@@ -38,20 +36,20 @@ export default function Form() {
     setDowload({...dowload, 'archiveExcelOrg': archiveExist})
   }
 
-  const changeJSONToExcel = (students, teachers, EG, PG) => {
-    var wsStudentCorrect = XLSX.utils.json_to_sheet(students.correctEmails);
-    var wsStudentCreated = XLSX.utils.json_to_sheet(students.createdEmails);
-    var wsTeacherCorrect = XLSX.utils.json_to_sheet(teachers.correctEmails);
-    var wsTeacherCreated = XLSX.utils.json_to_sheet(teachers.createdEmails);
-    var wsEG = XLSX.utils.json_to_sheet(EG);
-    var wsPG = XLSX.utils.json_to_sheet(PG);
-    var wb = XLSX.utils.book_new();
+  const changeJSONToExcel = (students, teachers, USERPG) => {
+    let wsStudentCorrect = XLSX.utils.json_to_sheet(students.correctEmails);
+    let wsStudentCreated = XLSX.utils.json_to_sheet(students.createdEmails);
+    let wsError = XLSX.utils.json_to_sheet(students.errorMails.concat(teachers.errorMails));
+    let wsTeacherCorrect = XLSX.utils.json_to_sheet(teachers.correctEmails);
+    let wsTeacherCreated = XLSX.utils.json_to_sheet(teachers.createdEmails);
+    let wsUSERPG = XLSX.utils.json_to_sheet(USERPG);
+    let wb = XLSX.utils.book_new();
     XLSX.utils.book_append_sheet(wb, wsStudentCorrect, "Alumnos");
     XLSX.utils.book_append_sheet(wb, wsStudentCreated, "Alumnos Creados");
     XLSX.utils.book_append_sheet(wb, wsTeacherCorrect, "Docentes");
     XLSX.utils.book_append_sheet(wb, wsTeacherCreated, "Docentes Creados");
-    XLSX.utils.book_append_sheet(wb, wsEG, "EG");
-    XLSX.utils.book_append_sheet(wb, wsPG, "PG");
+    XLSX.utils.book_append_sheet(wb, wsError, "Mails Erroneos");
+    XLSX.utils.book_append_sheet(wb, wsUSERPG, "USERPG");
     XLSX.writeFile(wb, "sheetjs.xlsx");
   }
 
@@ -60,11 +58,11 @@ export default function Form() {
   }
 
   const handleOnClickDownload = ()=>{
-    let students = createEmails(dataExcel.dataStudent, dataGoogle, valueDomain.student)
-    let teachers = createEmails(dataExcel.dataTeacher, dataGoogle, valueDomain.teacher)
-    let EG = creationEG(students, org)
-    let PG = creationPG(teachers, org)
-    changeJSONToExcel(students, teachers, EG, PG)
+    let mailsCreated = createEmails(dataExcel.dataStudent, dataExcel.dataTeacher, dataGoogle, valueDomain)
+    let students = mailsCreated.students
+    let teachers = mailsCreated.teachers
+    let USERPG = createUSERPG(students, teachers, org)
+    changeJSONToExcel(students, teachers, USERPG)
   }
 
   const onSubmit = (e, type) => {
@@ -101,14 +99,16 @@ export default function Form() {
                 </FormFC>
                 : null
             }
+            {
+              dowload?.value === 'third' ? 
+              <FormDowload
+                setDowload={setDowload}
+                setValueDomain={setValueDomain}
+                handleOnClickDownload={handleOnClickDownload}
+              />
+              : null
+            }
       </FormBackground>
-      {
-        dowload?.value === 'third' ? 
-        <FormBackground>
-          <FormButtonReturn onClick={()=> setDowload({'archiveExcel': false, 'archiveGoogle': false, 'value': 'first'})}> x </FormButtonReturn>
-          <FormButtonNext onClick={handleOnClickDownload}>Descargar</FormButtonNext>
-        </FormBackground> : null
-      }
     </FormContent>
   )
 }

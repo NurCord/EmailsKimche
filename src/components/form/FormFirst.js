@@ -1,7 +1,8 @@
 import React from 'react'
 import { FormInputs, FormInput, FormButtonFile, FormFile, FormButton} from './StyledForm'
 
-export default function FormFirst({ dowload, changeXLSXToJson, changeCSVToJson, handleOnChangeDomain, valueDomain}) {
+export default function FormFirst({ dowload, changeXLSXToJson, changeCSVToJson, handleOnChangeDomain, valueDomain }) {
+
   return (
         <>
             <FormInputs>
