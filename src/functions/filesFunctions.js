@@ -83,5 +83,5 @@ export const changeJSONToXLSX = (students,teachers,userpg) =>{
 
 export const downloadXLSX = (students, teachers, USERPG, archiveName) => {
     let archive = changeJSONToXLSX(students, teachers, USERPG)
-    XLSX.writeFile(archive, `${archiveName}sheetjs.xlsx`);
+    XLSX.writeFile(archive, `${archiveName}.xlsx`);
   }
