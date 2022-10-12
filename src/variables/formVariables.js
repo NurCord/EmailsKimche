@@ -9,3 +9,23 @@ export let stateInitial = {
     'archiveGoogle': false, 
     'archiveExcelOrg': false
 }
+
+export let studentBase = {
+  'RBD': '',	
+  'Establecimiento': '',	
+  'Curso': '',
+  'Nombre': '',	
+  'Apellido Paterno': '',	
+  'RUT': '',
+  'Mail Libro': ''
+}
+
+export let teacher = {
+  'RBD': '',	
+  'Establecimiento': '',	
+  'Nombre': '',	
+  'Apellido Paterno': '',	
+  'Apellido Materno': '',
+  'RUT': '',
+  'Mail Libro': ''
+}

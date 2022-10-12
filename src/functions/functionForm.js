@@ -1,18 +1,4 @@
-import normalizeEmail from "./functionNormalizeEmail"
-import cleanRut from "./functionCleanRut"
-
-let studentBase = {
-  'RBD': '',	
-  'Establecimiento': '',	
-  'Curso': '',
-  'Nombre': '',	
-  'Apellido Paterno': '',	
-  'RUT': '',
-  'Mail Libro': ''
-}
-
-let {Curso, ...teacher} = studentBase 	
-teacher['Apellido Materno']	= ''	
+import { studentBase, teacher } from '../variables/formVariables'
 
 function userToPush(userObj, rol){
   let obj = {}
@@ -21,57 +7,98 @@ function userToPush(userObj, rol){
   return obj
 }
 
+export function normalizeEmail(email){
+  return email.normalize("NFD").replace(/[ \u0300-\u036f]/g, "")
+}
+
+export const cleanRut = (rut) => {
+  let indexToCut = rut.indexOf('-')
+  let cleanRut = rut.slice(0, indexToCut).replaceAll('.', '')
+  return cleanRut
+}
+
+function addRol(user, changeMail, rol){
+  return {
+    'RBD': user.RBD,	
+    'Establecimiento': user.Establecimiento,	
+    'Rol': rol,
+    'Nombre': user.Nombre,	
+    'Apellido Paterno': user['Apellido Paterno'],	
+    'Apellido Materno': user['Apellido Materno'],
+    'RUT': user.RUT,
+    'Mail Libro': user['Mail Libro'],
+    'Mail Creado': changeMail
+  }
+}
+
 export const createEmails = (dataUsersExcelStudents, dataUsersExcelTeachers, dataUsersGoogle, emailDomain)=>{
     let objEmails = {}
     let mails = dataUsersGoogle.concat(dataUsersExcelTeachers).concat(dataUsersExcelStudents)
     addEmail(objEmails, null, mails)
 
-    let students = verifyMails(objEmails, dataUsersExcelStudents, dataUsersGoogle, emailDomain.student, 'Estudiante')
+    let students = createdMailAndVerify(objEmails, dataUsersExcelStudents, dataUsersGoogle, emailDomain.student, 'Estudiante')
 
     let teacherDomain = emailDomain.teacher ? emailDomain.teacher : emailDomain.student
-    let teachers = verifyMails(objEmails, dataUsersExcelTeachers, dataUsersGoogle, teacherDomain, 'Profesor')
+    let teachers = createdMailAndVerify(objEmails, dataUsersExcelTeachers, dataUsersGoogle, teacherDomain, 'Profesor')
 
     return { students, teachers }
 } 
 
-function verifyMails(objEmails, dataUsersExcel , dataUsersGoogle, emailDomain, rol){
+function verifyText(algorithm , evaluate ) {
+  return algorithm.test(evaluate)
+}
+
+function createdMailAndVerify(objEmails, dataUsersExcel , dataUsersGoogle, emailDomain, rol){
     let correctEmails = []
     let createdEmails = []
     let errorMails = []
 
     dataUsersExcel.forEach(user => {
         user = user['Curso'] ? userToPush(user, rol) : userToPush(user,rol)
-
         let searchRutUser = dataUsersGoogle.find(userGoogle => cleanRut(userGoogle['Employee ID']) === cleanRut(user['RUT']))
+
+
         if(searchRutUser){
-          if(/[A-ZáéíóúñÑ üÜ]/.test(searchRutUser['Email Address [Required]'])){
-            errorMails.push({...user, 'Mail Creado': 'NO', 'Rol': rol})
-          }
-          correctEmails.push({...user, 'Mail Libro': normalizeEmail(searchRutUser['Email Address [Required]'].toLowerCase())})
-        }else{
-          if(user['Mail Libro']?.includes(emailDomain)){
-            if(/[A-ZáéíóúñÑ üÜ]/.test(user['Mail Libro'])){
-              errorMails.push({...user, 'Mail Creado': 'NO', 'Rol': rol})
+            let mail = searchRutUser['Email Address [Required]']
+            
+            if(verifyText(/[A-ZáéíóúñÑ üÜ]/, mail)){
+              errorMails.push(addRol(user, 'NO', rol))
             }
-            correctEmails.push({...user, 'Mail Libro': normalizeEmail(user['Mail Libro'].toLowerCase())})
-          }else{
-            if(user['Mail Libro']) errorMails.push({...user, 'Mail Creado': 'SI', 'Rol': rol})
-            let name = user.Nombre.toLowerCase().split(' ')[0]
-            let lastName = user['Apellido Paterno'].toLowerCase().split(' ')[0]
-
-            let newEmail = `${name}.${lastName}${emailDomain}`
-
-            newEmail = normalizeEmail(newEmail)
-
-            addEmail(objEmails, newEmail) 
+            let mailWithDomain = normalizeEmail( mail.toLowerCase())
+            correctEmails.push(
+              {
+              ...user, 
+              'Mail Libro': mailWithDomain
+            })
+        
+        }else{
+            let mail = user['Mail Libro']
             
-            let countEmails = objEmails[newEmail]
-            
-            newEmail = countEmails !== 1 ? newEmail.replace('@', `${countEmails}@`) : newEmail
+            if(mail?.includes(emailDomain)){
+              if(verifyText(/[A-ZáéíóúñÑ üÜ]/, mail)){
+                errorMails.push(addRol(user, 'NO', rol))
+              }
+              let mailWithDomain = normalizeEmail(mail.toLowerCase())
+              correctEmails.push({...user, 'Mail Libro': mailWithDomain})
+            }else{
+              if(mail) errorMails.push(addRol(user, 'SI', rol))
+              let name = user.Nombre.toLowerCase().split(' ')[0]
+              let lastName = user['Apellido Paterno'].toLowerCase().split(' ')[0]
+
+              let newEmail = `${name}.${lastName}${emailDomain}`
+
+              newEmail = normalizeEmail(newEmail)
+
+              addEmail(objEmails, newEmail) 
               
-            createdEmails = [...createdEmails, {...user, 'Mail Libro': newEmail, 'Password': cleanRut(user.RUT).slice(0,4)}]
+              let countEmails = objEmails[newEmail]
+              
+              newEmail = countEmails !== 1 ? newEmail.replace('@', `${countEmails}@`) : newEmail
+                
+              createdEmails = [...createdEmails, {...user, 'Mail Libro': newEmail, 'Password': cleanRut(user.RUT).slice(0,4)}]
+            }
           }
-        }
+
     })
     return  {correctEmails, createdEmails, errorMails}
 }

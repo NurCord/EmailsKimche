@@ -1,4 +1,4 @@
-import cleanRut from "./functionCleanRut"
+import { cleanRut } from  './functionForm'
 
 export function createUSERPG(students, teachers, org, orgGoogle) {
         let userPG = []

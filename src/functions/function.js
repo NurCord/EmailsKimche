@@ -1,3 +1,5 @@
+import { cleanRut } from "./functionForm"
+
 export function creationEG(data, org){
     console.log(org)
 
@@ -140,10 +142,3 @@ export function creationPG(data, org){
     }
     return(PGcorrect.concat(PGcreated))
 }
-
-
-function cleanRut(rut){
-    let indexToCut = rut.indexOf('-')
-    let cleanRut = rut.slice(0, indexToCut).replaceAll('.', '')
-    return cleanRut
-  }
